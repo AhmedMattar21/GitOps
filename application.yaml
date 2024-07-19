@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: memo-argocd-application
+  namespace: argocd
+spec:
+  project: default      # each application belong to a project
+  source:               # the manifests repo
+    repoURL: https://github.com/AhmedMattar21/GitOps.git
+    targetRevision: HEAD      # means always refer to the last commit
+    path: memo           # dir name in the repo
+  destination:
+    server: https://kubernetes.default.svc      # the endpoint of k8s api server
+    namespace: memo                             # namespace to deploy on it
+
+  syncPolicy:
+     syncOptions:
+     - CreateNamespace=true            # create namespace if not exit
+     automated:                        # argoCD doesnot auto sync by default
+      selfHeal: true
+      prune: true                      # if deleted a file from the repo, argocd will delete it as well
